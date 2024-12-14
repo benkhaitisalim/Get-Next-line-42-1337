@@ -6,7 +6,7 @@
 /*   By: bsalim <bsalim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:34:36 by bsalim            #+#    #+#             */
-/*   Updated: 2024/12/14 06:10:16 by bsalim           ###   ########.fr       */
+/*   Updated: 2024/12/14 07:43:46 by bsalim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static char	*ft_strrchr(const char *s, int c);
 
 char	*get_next_line(int fd)
 {
-	static char	*left_c;
+	static char	*left_c = NULL;
 	char		*line;
 	char		*buffer;
 
@@ -46,6 +46,8 @@ static char	*ft_strrchr(const char *s, int c)
 	int		i;
 	char	charachter;
 
+	if(!s)
+		return NULL;;
 	str = (char *)s;
 	charachter = (char)c;
 	i = 0;
@@ -68,14 +70,14 @@ static char	*get_line_from_buffer(int fd, char *left_c, char *buffer)
 	char	*temporary;
 
 	b_read = 1;
-	if (!buffer && !left_c)
+	if (!buffer)
 		return (NULL);
 	while (b_read > 0) 
 	{
 		b_read = read(fd, buffer, BUFFER_SIZE);
 		if (b_read == -1)
 			return (left_c);
-		else if (b_read == 0)
+		else if (b_read == 0 && !left_c)
 			break ;
 		buffer[b_read] = '\0';
 		if (!left_c)
@@ -103,11 +105,14 @@ static char	*set_line(char *line_buffer)
 		if (line_buffer[index] == '\0')
 			return (NULL);
 		line = ft_strdup((line_buffer) + (index + 1));
+		if (!line)
+			return (NULL);	
 		if (*line == '\0')
 		{
 			free(line);
 			line = NULL;
 		}
+		line_buffer[index] = '\n';
 		line_buffer[index + 1] = '\0';
 		return (line);
 	}
